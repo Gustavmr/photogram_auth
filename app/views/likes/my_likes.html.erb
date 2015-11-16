@@ -1,0 +1,23 @@
+<div class="page-header">
+  <h3>My Likes</h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-striped table-hover">
+      <tr>
+        <th>Caption</th>
+        <th>image</th>
+        <th>User</th>
+      </tr>
+
+      <% @user.liked_photos.each do |like| %>
+      <tr>
+        <td><%= like.caption %></td>
+        <td><%= like.image %></td>
+        <td><%= like.user.username %></td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
