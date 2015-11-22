@@ -1,6 +1,13 @@
 class PhotosController < ApplicationController
+
+  # before_action :current_user_must_be_owner, :only => [:edit, :update, :destroy]
+  # def current_user_must_be_owner
+    # if current_user.id == params
+
   def index
-    @photos = Photo.all
+    @photos = Photo.order("created_at DESC")
+    @like = Like.new
+    @comment = Comment.new
   end
 
   def show
