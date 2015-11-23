@@ -10,6 +10,8 @@ end
 
 def userpage
 @user = current_user
+@like = Like.new
+@comment = Comment.new
 end
 
 end

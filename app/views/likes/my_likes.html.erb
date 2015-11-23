@@ -3,21 +3,108 @@
 </div>
 
 <div class="row">
-  <div class="col-md-12">
-    <table class="table table-striped table-hover">
-      <tr>
-        <th>Caption</th>
-        <th>image</th>
-        <th>User</th>
-      </tr>
+  <div class="col-md-8 col-md-offset-2">
+    <% @user.liked_photos.each do |photo| %>
 
-      <% @user.liked_photos.each do |like| %>
-      <tr>
-        <td><%= like.caption %></td>
-        <td><%= like.image %></td>
-        <td><%= like.user.username %></td>
-      </tr>
-      <% end %>
-    </table>
+    <!-- total panel -->
+    <div class="panel panel-default">
+
+      <!-- panel head -->
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <a href="users/<%= photo.user_id %>"><%= photo.user.username %></a>
+          <small>
+            <%= time_ago_in_words(photo.created_at) %> ago
+          </small>
+        </h3>
+      </div>
+
+      <!-- Panel Body -->
+      <div class="panel-body">
+        <!-- Photo -->
+        <a href="/photos/<%= photo.id %>"><img src="<%= photo.image %>" class="img-responsive center-block"></a>
+
+        <!-- Likes -->
+        <p>
+
+            <% if  photo.fans.pluck(:id).include?(current_user.id) %>
+
+            <a href="/delete_like/<%= photo.likes.find_by({ :user_id => current_user.id }).id %>" class="btn btn-link">
+             <i class="fa fa-heart"></i>
+           </a>
+
+              <% if photo.fans.pluck(:username).size == 0 %>
+              Be the first to like this picture
+
+              <% elsif photo.fans.pluck(:username).size == 1 %>
+              <%= (photo.fans.pluck(:username)).to_sentence %> likes this picture
+
+              <% else %>
+              <%= (photo.fans.pluck(:username)).to_sentence %> like this picture
+
+              <% end %>
+
+           <% else %>
+           <form action="/create_like" method="post">
+           <!-- Hidden input for authenticity token to protect from forgery -->
+           <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+           <input type="hidden" id="photo_id" name="photo_id" placeholder="Photo" class="form-control" value="<%= photo.id %>">
+           <input type="hidden" id="user_id" name="user_id" placeholder="User" class="form-control" value="<%= current_user.id %>">
+
+           <button class="btn btn-link">
+            <i class="fa fa-heart-o"></i>
+          </button>
+
+              <% if photo.fans.pluck(:username).size == 0 %>
+              Be the first to like this picture
+
+              <% elsif photo.fans.pluck(:username).size == 1 %>
+              <%= (photo.fans.pluck(:username)).to_sentence %> likes this picture
+
+              <% else %>
+              <%= (photo.fans.pluck(:username)).to_sentence %> like this picture
+
+              <% end %>
+
+          </form>
+          <% end %>
+      </p>
+
+      <!-- comments -->
+      <ul class="media-list">
+
+        <% photo.comments.each do |comment| %>
+
+        <li class="media">
+          <div class="media-body">
+            <h6 class="media-heading">
+              <a href="users/<%= comment.user.id %>"><%= comment.user.username %></a>
+              <small>
+                <%= time_ago_in_words(comment.created_at) %> ago
+              </small>
+            </h6>
+            <%= comment.body %>
+          </div>
+        </li>
+
+        <% end %>
+
+      </ul>
+
+      <!-- Add comment -->
+    <form action="/create_comment" method="post">
+
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+      <input type="text" id="body" name="body" placeholder ="Write a comment"  class="form-control" value="<%= @comment.body %>">
+      <input type="hidden" id="photo_id" name="photo_id" class="form-control" value="<%= photo.id %>">
+      <input type="hidden" id="user_id" name="user_id" class="form-control" value="<%= current_user.id %>">
+
+    </form>
+
+
+    </div>
   </div>
+  <% end %>
+
+</div>
 </div>

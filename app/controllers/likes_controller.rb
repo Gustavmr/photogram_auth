@@ -9,6 +9,8 @@ class LikesController < ApplicationController
 
   def my_likes
     @user = current_user
+    @like = Like.new
+    @comment = Comment.new
   end
 
   def new
